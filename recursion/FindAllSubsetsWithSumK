@@ -1,0 +1,71 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class MyClass {
+
+    // List to store all subsets that sum to k
+    static List<List<Integer>> result = new ArrayList<>();
+
+    // Method 1: Using bitwise approach to find subsets that sum to k
+    public static void find(int[] arr, int k) {
+        int n = (int) Math.pow(2, arr.length); // Number of possible subsets
+
+        // Iterate over all possible subsets
+        for (int i = 0; i < n; i++) {
+            int j = i;
+            int sum = 0;
+            int count = 0;
+            List<Integer> subset = new ArrayList<>();
+
+            // Build the current subset using bitwise operations
+            while (j > 0) {
+                if ((j & 1) == 1) {
+                    subset.add(arr[count]);
+                    sum += arr[count];
+                }
+                j = j >> 1;
+                count++;
+            }
+
+            // If the sum matches the target, print the subset
+            if (sum == k) {
+                System.out.println(subset + " value of i is " + i);
+            }
+        }
+    }
+
+    // Method 2: Using backtracking to find subsets that sum to k
+    public static void findSubsetWithK(int i, int[] arr, int k, int currentSum, List<Integer> subset) {
+        // Base case: if the current sum equals k, add the subset to the result list
+        if (currentSum == k) {
+            System.out.println(subset);
+            result.add(new ArrayList<>(subset));
+            return;
+        }
+
+        // If the index is out of bounds or the current sum exceeds k, return
+        if (i >= arr.length || currentSum > k) return;
+
+        // Recursive case: Explore without including the current element
+        findSubsetWithK(i + 1, arr, k, currentSum, subset);
+
+        // Include the current element and explore further
+        subset.add(arr[i]);
+        findSubsetWithK(i + 1, arr, k, currentSum + arr[i], subset);
+
+        // Backtrack: Remove the last added element
+        subset.remove(subset.size() - 1);
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {1, 4, 5, 2, 6, 4};
+        int k = 8;
+
+        // Method 1: Using bitwise approach
+        find(arr, k);
+
+        // Method 2: Using backtracking
+        findSubsetWithK(0, arr, k, 0, new ArrayList<>());
+        System.out.println(result);
+    }
+}
